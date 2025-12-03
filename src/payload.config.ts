@@ -2,13 +2,16 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
-import { buildConfig } from 'payload'
+import { buildConfig, Config } from 'payload'
+import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+// collections
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Products } from './collections/Products'
+import { Tenants } from './collections/Tenants'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,7 +23,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Products],
+  collections: [Users, Media, Products, Tenants],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -33,6 +36,15 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    // storage-adapter-placeholder
+    multiTenantPlugin({
+      collections: {
+        products: {},
+        media: {},
+      },
+      tenantsArrayField: {
+        includeDefaultField: true,
+      },
+      debug: true,
+    }),
   ],
 })
