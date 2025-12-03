@@ -37,6 +37,7 @@ export default buildConfig({
   sharp,
   plugins: [
     multiTenantPlugin({
+      tenantsSlug: Tenants.slug,
       collections: {
         products: {},
         media: {},
